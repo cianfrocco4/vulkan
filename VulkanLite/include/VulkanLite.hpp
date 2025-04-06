@@ -8,6 +8,7 @@
 #include <string>
 #include <stdexcept>
 #include <functional>
+#include <chrono>
 
 namespace VulkanLite {
 

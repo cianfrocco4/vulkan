@@ -7,7 +7,7 @@
 struct GameState {
     float paddleX = 0.0f;
     float ballX = 0.0f, ballY = -0.45f;
-    float ballVelX = 0.005f, ballVelY = 0.05f;
+    float ballVelX = 0.001f, ballVelY = 0.001f;
     int score = 0;
 };
 

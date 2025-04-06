@@ -1,6 +1,7 @@
 #include <VulkanLite.hpp>
 #include <cstring>
 #include <iostream>
+#include <thread>
 
 namespace
 {
@@ -252,6 +253,40 @@ void Renderer::bindPipeline(VkCommandBuffer cmdBuf) {
 }
 
 void Renderer::draw(VkCommandBuffer cmdBuf, const Buffer& vertexBuffer, uint32_t vertexCount) {
+    static auto lastTime = std::chrono::high_resolution_clock::now();
+    static auto lastFrameTime = std::chrono::high_resolution_clock::now();
+    static int frameCount = 0;
+    static double fps = 0.0;
+
+    // Current time and frame time
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    frameCount++;
+    double delta = std::chrono::duration<double>(currentTime - lastTime).count();
+
+    // Log FPS every second
+    if (delta >= 1.0) {
+        fps = frameCount / delta;
+        printf("FPS: %.2f, Frames: %d\n", fps, frameCount); // Logs FPS to console
+        frameCount = 0;
+        lastTime = currentTime;
+    }
+
+/*
+    // Optional: Cap at 60 FPS
+    double frameTimeDelta = std::chrono::duration<double>(currentTime - lastFrameTime).count();
+    if (frameTimeDelta < 1.0 / 60.0) {
+	printf("Sleeping for %.4f msec\n", 1.0 / 60.0 - frameTimeDelta);
+        std::this_thread::sleep_for(std::chrono::duration<double>(1.0 / 60.0 - frameTimeDelta));
+    }
+    else
+    {
+        printf("FrameTimeDelta = %.4f, 1/60=%.4f\n", frameTimeDelta, 1.0/60.0);
+    }
+*/    
+    lastFrameTime = currentTime;
+
+    // Render code
+    
     if (!cmdBuf) {
         std::cerr << "Error: cmdBuf is null in draw!" << std::endl;
         return;
@@ -261,7 +296,7 @@ void Renderer::draw(VkCommandBuffer cmdBuf, const Buffer& vertexBuffer, uint32_t
         std::cerr << "Error: vertexBuffer is null in draw!" << std::endl;
         return;
     }
-    
+
     VkBuffer vertexBuffers[] = {vb};
     VkDeviceSize offsets[] = {0};
     // std::cout << "Binding vertex buffer: cmdBuf=" 
@@ -284,6 +319,7 @@ void VulkanContext::initWindow(const std::string& appName, uint32_t width, uint3
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     window = glfwCreateWindow(width, height, appName.c_str(), nullptr, nullptr);
+    glfwSwapInterval(1); // 1 = VSync on, 0 = VSync off
 }
 
 void VulkanContext::initVulkan() {
