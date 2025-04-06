@@ -147,8 +147,8 @@ Renderer::Renderer(VkDevice device, VkRenderPass renderPass, VkExtent2D extent) 
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout);
 
-    Shader vertShader(device, "/home/paperspace/git/build/Pong/triangle.vert.spv");
-    Shader fragShader(device, "/home/paperspace/git/build/Pong/triangle.frag.spv");
+    Shader vertShader(device, "triangle.vert.spv");
+    Shader fragShader(device, "triangle.frag.spv");
 
     VkPipelineShaderStageCreateInfo shaderStages[2] = {};
     shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
