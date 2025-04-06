@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cstring>
 
 struct GameState {
     float paddleX = 0.0f;
@@ -109,7 +110,7 @@ int main() {
         // The staging buffer (stagingPaddle) is CPU-writable. 
         // Mapping lets us directly update its contents with the new 
         // paddle vertex positions computed earlier.
-        memcpy(data, updatedPaddle.data(), sizeof(VulkanLite::Vertex) * updatedPaddle.size());
+	std::memcpy(data, updatedPaddle.data(), sizeof(VulkanLite::Vertex) * updatedPaddle.size());
         vkUnmapMemory(context.getDevice(), stagingPaddle.memory);
 
         vkMapMemory(
@@ -119,7 +120,7 @@ int main() {
             sizeof(VulkanLite::Vertex) * updatedBall.size(), 
             0, 
             &data);
-        memcpy(data, updatedBall.data(), sizeof(VulkanLite::Vertex) * updatedBall.size());
+	std::memcpy(data, updatedBall.data(), sizeof(VulkanLite::Vertex) * updatedBall.size());
         vkUnmapMemory(context.getDevice(), stagingBall.memory);
 
         VkBufferCopy paddleCopy{};

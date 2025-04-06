@@ -147,8 +147,8 @@ Renderer::Renderer(VkDevice device, VkRenderPass renderPass, VkExtent2D extent) 
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout);
 
-    Shader vertShader(device, "/Users/anthony/Library/CloudStorage/OneDrive-rit.edu/Personal/Vulkan/build/Pong/triangle.vert.spv");
-    Shader fragShader(device, "/Users/anthony/Library/CloudStorage/OneDrive-rit.edu/Personal/Vulkan/build/Pong/triangle.frag.spv");
+    Shader vertShader(device, "/home/paperspace/git/build/Pong/triangle.vert.spv");
+    Shader fragShader(device, "/home/paperspace/git/build/Pong/triangle.frag.spv");
 
     VkPipelineShaderStageCreateInfo shaderStages[2] = {};
     shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -298,14 +298,25 @@ void VulkanContext::initVulkan() {
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
     std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-    extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+
+    #ifndef __APPLE__
+    	// Skip VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME
+    #else
+        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    #endif
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
     createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
     createInfo.ppEnabledExtensionNames = extensions.data();
-    createInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+    
+    #ifndef __APPLE__
+        // Skip VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME
+    #else
+        createInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+    #endif
+    
     if(const auto lnOutput = vkCreateInstance(&createInfo, nullptr, &instance);
         lnOutput != VK_SUCCESS)
     {
